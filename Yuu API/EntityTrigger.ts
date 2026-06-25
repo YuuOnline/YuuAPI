@@ -2,6 +2,7 @@ import { Vector3 } from "./Basic Types/Vector3";
 import { Entity } from "./Entity";
 import { entity_Data } from "./Entity_Data";
 import { Events } from "./Events";
+import { Player } from "./Player";
 import { registerStart } from "./RegisterStart";
 
 
@@ -14,11 +15,11 @@ function onUpdate(deltaTime: number) {
   const playerPositions: Vector3[] = [];
 
   // What about triggers that only detect specific body parts
-  addToArray(playerPositions, Godot.localPlayer.head.position.get());
-  addToArray(playerPositions, Godot.localPlayer.body.position.get());
-  addToArray(playerPositions, Godot.localPlayer.leftHand.position.get());
-  addToArray(playerPositions, Godot.localPlayer.rightHand.position.get());
-  addToArray(playerPositions, Godot.localPlayer.foot.position.get());
+  playerPositions.push(Player.head.position.get() ?? Vector3.zero);
+  playerPositions.push(Player.body.position.get() ?? Vector3.zero);
+  playerPositions.push(Player.leftHand.position.get() ?? Vector3.zero);
+  playerPositions.push(Player.rightHand.position.get() ?? Vector3.zero);
+  playerPositions.push(Player.foot.position.get() ?? Vector3.zero);
 
   entity_Data.triggerMap.forEach((payload, entityNodeID) => {
     // Current Sphere / Cylinder triggers only work upright
@@ -89,11 +90,4 @@ function onUpdate(deltaTime: number) {
       }
     }
   });
-}
-
-
-function addToArray(array: Vector3[], item: { x: number; y: number; z: number; } | undefined) {
-  if (item) {
-    array.push(new Vector3(item.x, item.y, item.z));
-  }
 }
