@@ -15,6 +15,7 @@ import { entity_Data, OccupiedTriggerPayload, OnUpdatePayload, WhatCanTrigger } 
  */
 export class Entity {
   public nodeID: number | undefined;
+  public uniqueID: string;
   public type: BaseNodeTypes | undefined;
   private childNodeIDs: number[] = [];
 
@@ -161,6 +162,8 @@ export class Entity {
    */
   constructor(pos: Vector3, rot: Quaternion, scale: Vector3, parent: Entity | undefined, type: BaseNodeTypes) {
     this.nodeID = Godot.node.create.base(parent?.nodeID, type);
+    // this.uniqueID = crypto.randomUUID();
+    this.uniqueID = 'Hello Loser';
 
     if (this.nodeID) {
       Entity.entityMap.set(this.nodeID, this);
@@ -1084,15 +1087,17 @@ export class Entity {
     /**
      * Initializes the particles with default values if not already initialized
      */
-    initialize: () => {
+    initialize: (properties: Partial<ParticlesProperties> = entity_Data.defaultParticlesProperties) => {
       if (this.nodeID) {
         if (this.particles.nodeID === undefined) {
           this.particles.nodeID = Godot.node.create.particles(this.nodeID);
 
           if (this.particles.nodeID) {
             Godot.node.particles.initialize(this.particles.nodeID);
-          
+
             this.childNodeIDs.push(this.particles.nodeID);
+
+            this.particles.setParticlesProperties(properties);
           }
         }
       }
@@ -1104,11 +1109,13 @@ export class Entity {
      */
     setParticlesProperties: (properties: Partial<ParticlesProperties>) => {
       if (this.nodeID) {
-        this.particles.initialize();
-
         if (this.particles.nodeID) {
-          if (properties.mesh?.mesh.nodeID) {
-            Godot.node.particles.mesh.set(this.particles.nodeID, properties.mesh.mesh.nodeID);
+          if (properties.meshID) {
+            const mesh = Entity.getEntityByID(properties.meshID);
+
+            if (mesh?.mesh.nodeID) {
+              Godot.node.particles.mesh.set(this.particles.nodeID, mesh.mesh.nodeID);
+            }
           }
 
           if (properties.emissionShape) {
@@ -1255,6 +1262,9 @@ export class Entity {
           if (properties.transformAlign) {
             Godot.node.particles.transformAlign.set(this.particles.nodeID, properties.transformAlign);
           }
+        }
+        else {
+          this.particles.initialize(properties);
         }
       }
     },
