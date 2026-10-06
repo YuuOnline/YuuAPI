@@ -1,10 +1,9 @@
 import { Vector3 } from "../Basic Types/Vector3";
-import { Entity } from "../Entity/Entity";
 
 
 // Edit this type definition to have explanations like the d.ts
 export type ParticlesProperties = {
-  mesh: Entity,
+  meshID: number,
   emissionShape: ParticlesEmissionShape,
   emissionShapeProperties: {
     sphereRadius: number | undefined,

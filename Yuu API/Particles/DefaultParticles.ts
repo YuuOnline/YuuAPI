@@ -1,6 +1,8 @@
 import { Color } from "../Basic Types/Color"
 import { Quaternion } from "../Basic Types/Quaternion";
 import { Vector3 } from "../Basic Types/Vector3";
+import { entity_Data } from "../Entity/Entity_Data";
+import { registerStart } from "../RegisterStart";
 import { DefaultShaders } from "../Shader/DefaultShaders"
 import { spawnPrimitive } from "../SpawnPrimitive";
 import { ParticlesProperties } from "./Particles";
@@ -18,6 +20,15 @@ export const DefaultParticles = {
 }
 
 
+const basicSphere = spawnPrimitive.sphere(12, 6, new Vector3(0, -100, 0), 1, Quaternion.one, Color.white, 1, 'None', 'Empty', undefined);
+basicSphere.visible.set(false);
+
+registerStart(start);
+function start() {
+  entity_Data.defaultParticlesProperties.meshID = basicSphere.nodeID ?? -1;
+}
+
+
 const coloredWaterFountainSphere = spawnPrimitive.sphere(12, 6, new Vector3(0, -100, 0), 1, Quaternion.one, Color.white, 1, 'None', 'Empty', undefined);
 coloredWaterFountainSphere.visible.set(false);
 
@@ -25,7 +36,7 @@ function getColoredWaterFountainParticlesProperties(color: Color): ParticlesProp
   coloredWaterFountainSphere.mesh.color.set(color, 1);
 
   return {
-    mesh: coloredWaterFountainSphere,
+    meshID: coloredWaterFountainSphere.nodeID ?? -1,
     emissionShape: 'Point',
     emissionShapeProperties: {
       sphereRadius: undefined,
@@ -79,7 +90,7 @@ function getRainbowCubeParticlesProperties(durationSeconds: number, saturation: 
   // Instead of creating a new shader, it could update the shader properties.
 
   return {
-    mesh: rainbowCube,
+    meshID: rainbowCube.nodeID ?? -1,
     emissionShape: 'Point',
     emissionShapeProperties: {
       sphereRadius: undefined,
@@ -127,11 +138,11 @@ function getRainbowCubeParticlesProperties(durationSeconds: number, saturation: 
 
 const heartSphere = spawnPrimitive.sphere(12, 6, new Vector3(0, -100, 0), 1, Quaternion.one, Color.white, 1, 'None', 'Empty', undefined);
 heartSphere.mesh.shader.set(DefaultShaders.getHeartShader());
-coloredWaterFountainSphere.visible.set(false);
+heartSphere.visible.set(false);
 
 function getHeartParticlesProperties(): ParticlesProperties {
   return {
-    mesh: heartSphere,
+    meshID: heartSphere.nodeID ?? -1,
     emissionShape: 'Sphere',
     emissionShapeProperties: {
       sphereRadius: 0.5,
@@ -180,9 +191,11 @@ function getHeartParticlesProperties(): ParticlesProperties {
 const smokeSphere = spawnPrimitive.sphere(12, 6, new Vector3(0, -100, 0), 1, Quaternion.one, Color.white, 1, 'None', 'Empty', undefined);
 smokeSphere.visible.set(false);
 
-function getSmokeParticlesProperties(): ParticlesProperties {
+function getSmokeParticlesProperties(color: Color | undefined): ParticlesProperties {
+  smokeSphere.mesh.color.set(color ?? new Color(0.4, 0.4, 0.35), 0.5);
+
   return {
-    mesh: smokeSphere,
+    meshID: smokeSphere.nodeID ?? -1,
     emissionShape: 'Sphere',
     emissionShapeProperties: {
       sphereRadius: undefined,
@@ -235,7 +248,7 @@ function getExplosionParticlesProperties(color: Color): ParticlesProperties {
   explosionParticlesSphere.mesh.shader.set(DefaultShaders.getColorShader(color, 0.7, 0.8));
 
   return {
-    mesh: explosionParticlesSphere,
+    meshID: explosionParticlesSphere.nodeID ?? -1,
     emissionShape: 'Point',
     emissionShapeProperties: {
       sphereRadius: undefined,
@@ -288,7 +301,7 @@ function getMagicFloatingParticlesProperties(durationSeconds: number, saturation
   magicFloatingSphere.mesh.shader.set(DefaultShaders.getRainbowShader(durationSeconds, saturation, value, 0.5, 0.5));
 
   return {
-    mesh: magicFloatingSphere,
+    meshID: magicFloatingSphere.nodeID ?? -1,
     emissionShape: 'Ring',
     emissionShapeProperties: {
       sphereRadius: undefined,
@@ -337,9 +350,11 @@ function getMagicFloatingParticlesProperties(durationSeconds: number, saturation
 const rainParticlesSphere = spawnPrimitive.sphere(12, 6, new Vector3(0, -100, 0), 1, Quaternion.one, Color.white, 1, 'None', 'Empty', undefined);
 rainParticlesSphere.visible.set(false);
 
-function getRainParticlesProperties(): ParticlesProperties {
+function getRainParticlesProperties(color: Color | undefined): ParticlesProperties {
+  rainParticlesSphere.mesh.color.set(color ?? new Color(0.427, 0.706, 0.969), 0.8);
+
   return {
-    mesh: rainParticlesSphere,
+    meshID: rainParticlesSphere.nodeID ?? -1,
     emissionShape: 'Box',
     emissionShapeProperties: {
       sphereRadius: 0.1,
@@ -389,9 +404,11 @@ function getRainParticlesProperties(): ParticlesProperties {
 const rainSplashParticlesSphere = spawnPrimitive.sphere(12, 6, new Vector3(0, -100, 0), 1, Quaternion.one, Color.white, 1, 'None', 'Empty', undefined);
 rainSplashParticlesSphere.visible.set(false);
 
-function getRainSplashParticlesProperties(): ParticlesProperties {
+function getRainSplashParticlesProperties(color: Color | undefined): ParticlesProperties {
+  rainSplashParticlesSphere.mesh.color.set(color ?? new Color(0.427, 0.706, 0.969), 0.8);
+  
   return {
-    mesh: rainSplashParticlesSphere,
+    meshID: rainSplashParticlesSphere.nodeID ?? -1,
     emissionShape: 'Point',
     emissionShapeProperties: {
       sphereRadius: undefined,
